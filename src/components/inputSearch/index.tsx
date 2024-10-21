@@ -23,9 +23,14 @@ const styles = StyleSheet.create({
         width: '90%',
         height: 48,
         borderRadius: 100,
-        paddingLeft: 15,
+        paddingTop: 12,
+        paddingBottom: 12,
+        paddingLeft: 16,
+        paddingRight: 16,
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        marginTop: 10,
+        gap: 4
     },
     input:{
         marginLeft: 5
