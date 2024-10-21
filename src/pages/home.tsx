@@ -17,14 +17,43 @@ export default function Home() {
 
         async function fetchApi() {
             const response = await api.get('/employees')
-            console.log(response.data)
             setEmployees(response.data)
         }
 
         fetchApi();
     }, [])
 
-    
+    async function searchEmployee(text: string) {
+
+        if (text === '') {
+            return;
+        }
+
+        try {
+
+            const [nameResponse, jobResponse, phoneResponse] = await Promise.all([
+                api.get(`/employees?name=${text}`),
+                api.get(`/employees?job=${text}`),
+                api.get(`/employees?phone=${text}`)
+            ]);
+
+
+            if (nameResponse.data.length > 0) {
+                setEmployees(nameResponse.data);
+            } else if (jobResponse.data.length > 0) {
+                setEmployees(jobResponse.data);
+            } else if (phoneResponse.data.length > 0) {
+                setEmployees(phoneResponse.data);
+            } else {
+
+                setEmployees([]);
+            }
+
+        } catch (error) {
+            console.error('Erro ao buscar empregados:', error);
+
+        }
+    }
 
 
     const statusBarHeight = Platform.OS === 'android' ? StatusBar.currentHeight : 0;
@@ -47,7 +76,7 @@ export default function Home() {
                         style={styles.input}
                         placeholder="Pesquisar"
                         placeholderTextColor={'#1C1C1C'}
-                        onChange={(text)=>{}}
+                        onChangeText={(text) => { searchEmployee(text) }}
                     />
                 </View>
                 <ListEmployees
