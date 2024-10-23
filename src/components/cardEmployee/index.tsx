@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, StyleSheet, View, TouchableOpacity, Image } from "react-native";
+import { Text, StyleSheet, View, TouchableOpacity, Image, Pressable } from "react-native";
 import { AntDesign } from '@expo/vector-icons'
 import { EmployeeProps } from "../../types/employee.types";
 
@@ -7,18 +7,59 @@ import { EmployeeProps } from "../../types/employee.types";
 export default function CardEmployee({ data }: { data: EmployeeProps }) {
 
     const [heightCard, setHeightCard] = useState(60);
+    const [icon, setIcon] = useState('para baixo');
 
     function modfyHeight() {
-        console.log(heightCard)
         if (heightCard === 60) {
             setHeightCard(200);
+            setIcon('para cima')
         } else {
             setHeightCard(60);
+            setIcon('para baixo')
         }
     }
 
+    function switchIcon(icon: string): void {
+        if(icon === 'dowm'){
+            setIcon('up')
+        }else{
+            setIcon('down')
+        }
+    }
+
+    function formatDate(dateString: string): string | undefined {
+        const regex = /^(\d{4})-(\d{2})-(\d{2})T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+        const match = dateString.match(regex);
+
+        if (match) {
+            // Extraímos o ano, mês e dia
+            let year = match[1];
+            let month = match[2];
+            let day = match[3];
+
+            // Retorna no formato DD/MM/AAAA
+            return `${day}/${month}/${year}`;
+        }
+        return
+    }
+
+    function formatPhone(phoneString: string): string | undefined {
+        const regex = /^55(\d{2})(\d{5})(\d{4})$/;
+        const match = phoneString.match(regex);
+
+        if (match) {
+            let ddd = match[1];
+            let prefix = match[2];
+            let suffix = match[3];
+
+            // Retorna no formato +55 (XX) XXXXX-XXXX
+            return `+55 (${ddd}) ${prefix}-${suffix}`;
+        }
+        return
+    }
+
     return (
-        <View style={[styles.containerCard, { height: heightCard }]}>
+        <Pressable style={[styles.containerCard, { height: heightCard }]} onPress={() => modfyHeight()}>
             <View style={styles.headerCard}>
                 <View style={styles.ImageAndName}>
                     <Image
@@ -27,14 +68,12 @@ export default function CardEmployee({ data }: { data: EmployeeProps }) {
                     />
                     <Text>{data.name}</Text>
                 </View>
-                <TouchableOpacity onPress={() => modfyHeight()}>
                     <AntDesign
-                        name='down'
+                        name={icon === 'para baixo'? 'down': 'up'}
                         size={20}
-                        color='#1C1C1C'
+                        color='#0500FF'
                         style={styles.icon}
                     />
-                </TouchableOpacity>
             </View>
             <View style={styles.bodyCard}>
                 <View>
@@ -48,7 +87,7 @@ export default function CardEmployee({ data }: { data: EmployeeProps }) {
                 <View>
                     <View style={styles.bodyCardInformations}>
                         <Text>Data de admissão</Text>
-                        <Text>{data.admission_date}</Text>
+                        <Text>{formatDate(data.admission_date)}</Text>
                     </View>
                     <Text style={styles.line}>----------------------------------------------------------------------------</Text>
                 </View>
@@ -56,12 +95,12 @@ export default function CardEmployee({ data }: { data: EmployeeProps }) {
                 <View>
                     <View style={styles.bodyCardInformations}>
                         <Text>Telefone</Text>
-                        <Text>{data.phone}</Text>
+                        <Text>{formatPhone(data.phone)}</Text>
                     </View>
                     <Text style={styles.line}>----------------------------------------------------------------------------</Text>
                 </View>
             </View>
-        </View>
+        </Pressable>
     );
 }
 
@@ -69,7 +108,7 @@ const styles = StyleSheet.create({
 
     containerCard: {
         backgroundColor: '#FFF',
-        width: '100%',
+        width: 335,
         borderWidth: 1,
         borderColor: '#EDEFFB',
     },
@@ -93,7 +132,6 @@ const styles = StyleSheet.create({
         marginRight: 15
     },
     bodyCard: {
-        gap: 8,
         paddingLeft: 15,
         paddingRight: 15
     },
