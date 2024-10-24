@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { StyleSheet, View, Image, Platform, StatusBar, ScrollView, TextInput, Text } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import Header from '../../components/header';
@@ -9,20 +9,23 @@ import api from '../../services/api';
 import { Entypo } from '@expo/vector-icons';
 
 export default function Teste() {
-    
-    const opacity = useSharedValue(1);  
-    const [display, setDisplay] = useState(true)
+
+    const opacity = useSharedValue(1);
+    const [index, setIndex] = useState(3)
+    const [searcInput, setSeaarchInput] = useState('')
     const [employees, setEmployees] = useState<EmployeeProps[]>([]);
+
     useEffect(() => {
-        setTimeout(() => {
+        const timeout1 = setTimeout(() => {
             opacity.value = withTiming(0, { duration: 500 });
         }, 1000);
 
-        const timeout = setTimeout(() => {
-            setDisplay(false)
-        }, 1000);
+        const timeout2 = setTimeout(() => {
+            setIndex(0)
+        }, 1500);
 
-        return () => clearTimeout(timeout);
+
+        return () => { clearTimeout(timeout1), clearTimeout(timeout2) };
     }, []);
 
     useEffect(() => {
@@ -33,6 +36,29 @@ export default function Teste() {
 
         fetchApi();
     }, []);
+
+    function handeInputChange(text: string) {
+        setSeaarchInput(text)
+        delayedApiCall(text)
+    }
+
+    const debounce = (func: (...args: string[]) => void, dalay: number) => {
+        let tiemout: NodeJS.Timeout | null = null;
+
+        return (...args: string[]) => {
+            if (tiemout) {
+                clearInterval(tiemout);
+            }
+            tiemout = setTimeout(() => {
+                func(...args)
+            }, dalay)
+        }
+    }
+
+    const delayedApiCall = useCallback(
+        debounce(async (text: string) => await searchEmployee(text), 700),
+        []
+    )
 
     async function searchEmployee(text: string) {
         if (text === '') {
@@ -62,6 +88,8 @@ export default function Teste() {
         }
     }
 
+
+
     const animatedStyle = useAnimatedStyle(() => {
         return {
             opacity: opacity.value,
@@ -70,11 +98,10 @@ export default function Teste() {
     const statusBarHeight = Platform.OS === 'android' ? StatusBar.currentHeight : 0;
     return (
         <View style={styles.container}>
-            <Animated.View style={[styles.containerInitial, { opacity: display ? 1 : 0 }, animatedStyle]}>
+            <Animated.View style={[styles.containerInitial, { zIndex: index }, animatedStyle]}>
                 <Image source={require('../../assets/logo.png')} />
             </Animated.View>
-
-            <View style={[styles.container2, { paddingTop: statusBarHeight }]}>
+            <View style={[styles.containerHome, { paddingTop: statusBarHeight }]}>
                 <Header />
                 <ScrollView style={styles.containerContent} showsVerticalScrollIndicator={false}>
                     <Text style={styles.title}>Funcionários</Text>
@@ -84,7 +111,7 @@ export default function Teste() {
                             style={styles.input}
                             placeholder="Pesquisar"
                             placeholderTextColor={'#1C1C1C'}
-                            onChangeText={(text) => searchEmployee(text)}
+                            onChangeText={(text) => handeInputChange(text)}
                         />
                     </View>
                     <View style={styles.headerList}>
@@ -110,6 +137,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: '#FFF',
     },
     containerInitial: {
         position: 'absolute',
@@ -118,12 +146,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#0500FF',
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: 1,
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
     },
-    container2: {
+    containerHome: {
         width: '100%',
         height: '100%',
-        backgroundColor: '#FFF',
         alignItems: 'center',
     },
     containerContent: {

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, StyleSheet, View, TouchableOpacity, Image, Pressable } from "react-native";
+import { Text, StyleSheet, View, Image, Pressable } from "react-native";
 import { AntDesign } from '@expo/vector-icons'
 import { EmployeeProps } from "../../types/employee.types";
 

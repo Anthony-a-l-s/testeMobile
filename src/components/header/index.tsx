@@ -22,7 +22,7 @@ export default function Header() {
 const styles = StyleSheet.create({
     containerHeader: {
         position: 'absolute',
-        zIndex: 1,
+        zIndex: 2,
         opacity: 0.9,
         backgroundColor: '#FFF',
         width: '100%',
