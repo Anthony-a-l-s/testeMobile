@@ -38,12 +38,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: 50,
         height: 50,
-        borderRadius: 20,
-        marginLeft: 10,
+        borderRadius: 25,
+        marginLeft: 20,
         marginTop: 12,
     },
     icon:{
-        marginRight: 30,
+        marginRight: 35,
         marginTop: 25,
     }
 })
