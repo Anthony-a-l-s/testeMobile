@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 export interface EmployeeProps {
 
     id: string;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView, Platform, Dimensions, StatusBar, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Platform, StatusBar} from 'react-native';
 import { Feather } from '@expo/vector-icons'
 
 export default function Header() {
